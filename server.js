@@ -5,15 +5,14 @@ const fs = require("fs");
 const notes = require("./db/db.json");
 const generateUniqueId = require("generate-unique-id");
 
-console.log(notes);
-
-
 const PORT = 3001;
 const app = express();
 
+// Middleware for parsing JSON and urlencoded form data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Allows files in public directory to be loaded
 app.use(express.static("public"));
 
 // GET /notes returns the notes.html
@@ -22,12 +21,7 @@ app.get("/notes", (req, res) =>
 );
 
 // GET /api/notes reads the db.json file and returns all saved notes as JSON
-app.get("/api/notes", (req, res) => res.json(notes));
-// app.get("/api/notes", (req, res) => {
-//   fs.readFileSync("./db/db.json", "utf8", (err, data) => {
-//     res.json(notes);
-//   })
-// });
+app.get("/api/notes", (req, res) =>  res.json(notes));
 
 // GET * returns the index.html
 app.get("*", (req, res) =>
@@ -47,7 +41,7 @@ app.post("/api/notes", (req, res) => {
     var newNote = {
       title,
       text,
-      note_id: generateUniqueId({
+      id: generateUniqueId({
         length: 10
       })
     };
@@ -67,42 +61,41 @@ app.post("/api/notes", (req, res) => {
       body: newNote,
     };
 
-    console.log(response);
     res.status(201).json(response);
   } else {
     res.status(500).json("Error in saving note");
   }
 });
 
-
-
+// read all notes from the `db.json` file, remove the note with the given `id` property, and then rewrite the notes to the `db.json` file
 app.delete("/api/notes/:id", (req, res) => {
-  fs.readFile("./db/db.json", "utf8", (err, data) => {
-    const { title, text, id } = req.body;
-    notes.splice(req.body, 1);
-    console.log(notes);
-  });
+  // Destructuring assignment for the items in req.body
+  const { id } = req.params;
+
+  // If id is present
+  if (id) {
+
+    // updatedNotes stores all notes but excludes the deleted note with the id 
+    updatedNotes = notes.filter(note => note.id != id);
+    
+    // Writes file again without the deleted note
+    fs.writeFile(`./db/db.json`, JSON.stringify(updatedNotes, null, "\t"), (err) =>
+      err
+        ? console.log(err)
+        : console.log(`Note with ${id} has successfully been deleted.`)
+    );
+
+    const response = {
+      status: "success",
+    };
+
+    res.status(201).json(response);
+  } else {
+    res.status(500).json("Error in deleting note");
+  }
 });
 
-// notes.delete(id, (err) => {
-//   if (err) {
-//     console.log(err);
-//   } else {
-//     res.send({ message: "Note deleted!"})
-//   }
-// })
-
-//   notes.destroy({
-//     where: {
-//       note_id: req.params.note_id,
-//     },
-//   })
-//     .then((deletedNote) => {
-//       res.json(deletedNote);
-//     })
-//     .catch((err) => res.json(err));
-
-
+// Runs server at PORT
 app.listen(PORT, () =>
   console.log(`App listening at http://localhost:${PORT}`)
 )
