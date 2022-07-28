@@ -1,10 +1,12 @@
 [
-    {
-        "title":"Test Title",
-        "text":"Test text"
-    }, 
-    {
-        "title":"Test Title2",
-        "text":"Test text2"
-    }
+	{
+		"title": "Lost Ark",
+		"text": "Still waiting on Aeromancer",
+		"note_id": "wyr7e9zweq"
+	},
+	{
+		"title": "Genshin Impact",
+		"text": "Must do daily commissions",
+		"note_id": "e6lta72t87"
+	}
 ]
