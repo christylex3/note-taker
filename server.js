@@ -12,7 +12,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Allows files in public directory to be loaded
+// Allows access to files in public directory
 app.use(express.static("public"));
 
 // GET /notes returns the notes.html
@@ -28,7 +28,7 @@ app.get("*", (req, res) =>
   res.sendFile(path.join(__dirname, "/public/index.html"))
 );
 
-// POST /api/notes should receive a new note to save on the request body, add it to the db.json file, and then return the new note to the client
+// POST /api/notes receives a new note to save on the request body, adds it to the db.json file, and then returns the new note to the client
 app.post("/api/notes", (req, res) => {
 
   // Destructuring assignment for the items in req.body
