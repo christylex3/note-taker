@@ -5,7 +5,7 @@ const fs = require("fs");
 const notes = require("./db/db.json");
 const generateUniqueId = require("generate-unique-id");
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 const app = express();
 
 // Middleware for parsing JSON and urlencoded form data
