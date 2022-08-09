@@ -2,14 +2,14 @@
 
 ## Description
 
-This application generates a note based 
+This application generates a note based on the title and content the user enters in.
 
 ## Table of Contents
 
 * [Installation](#installation)
 * [Usage](#usage)
 * [Contribution](#contribution)
-* [Tests](#tests)
+* [Visuals](#visuals)
 * [Questions](#questions)
 
 ## Installation
@@ -34,9 +34,7 @@ Guide on using Note Taker:
 * To remove the note, click on the `trash icon`.
 * To check out new notes, click on the other notes' title.
 
-
-> Note: A video demonstration is provided. Click [here]() to view.
-
+Deployed App Link: 
 
 ## Contribution
 
@@ -47,7 +45,11 @@ No contributions needed.
 
 Here is how Note Taker should appear when it is launched:
 
-![Landing page](./)
+![Landing page](./public/assets/images/landing-page.jpg)
+
+Here is how it looks when creating a note:
+
+![Note creation page](./public/assets/images/creating-note.jpg)
 
 ## Questions
 
