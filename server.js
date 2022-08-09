@@ -2,11 +2,11 @@
 const express = require("express");
 const path = require("path");
 const fs = require("fs");
-const notes = require("./db/db.json");
 const generateUniqueId = require("generate-unique-id");
+let notes;
 
-const PORT = process.env.PORT || 3001;
 const app = express();
+const PORT = process.env.PORT || 3001;
 
 // Middleware for parsing JSON and urlencoded form data
 app.use(express.json());
@@ -21,7 +21,18 @@ app.get("/notes", (req, res) =>
 );
 
 // GET /api/notes reads the db.json file and returns all saved notes as JSON
-app.get("/api/notes", (req, res) => res.json(notes));
+app.get("/api/notes", (req, res) => {
+	fs.readFile(`./db/db.json`, (err, data) => {
+		
+		if (err) {
+			throw err;
+		}
+
+		notes = JSON.parse(data);
+		res.json(notes);
+
+	});
+});
 
 // GET * returns the index.html
 app.get("*", (req, res) =>
@@ -44,24 +55,32 @@ app.post("/api/notes", (req, res) => {
 			}),
 		};
 
-		// Add new note to array of notes
-		notes.push(newNote);
+		fs.readFile(`./db/db.json`, (err, data) => {
+		
+			if (err) {
+				throw err;
+			}
+			notes = JSON.parse(data);
 
-		// Writes file again with new note added
-		fs.writeFile(`./db/db.json`, JSON.stringify(notes, null, "\t"), (err) =>
-			err
-				? console.log(err)
-				: console.log(
-						`${newNote.title} has successfully been added to notes.`
-				  )
-		);
+			// Add new note to array of notes
+			notes.push(newNote);
 
-		const response = {
-			status: "success",
-			body: newNote,
-		};
+			// Writes file again with new note added
+			fs.writeFile(`./db/db.json`, JSON.stringify(notes, null, "\t"), (err) =>
+				err
+					? console.log(err)
+					: console.log(
+							`${newNote.title} has successfully been added to notes.`
+					)
+			);
 
-		res.status(201).json(response);
+			const response = {
+				status: "success",
+				body: newNote,
+			};
+
+			res.status(201).json(response);
+		});
 	} else {
 		res.status(500).json("Error in saving note");
 	}
@@ -74,26 +93,35 @@ app.delete("/api/notes/:id", (req, res) => {
 
 	// If id is present
 	if (id) {
-		// updatedNotes stores all notes but excludes the deleted note with the id
-		updatedNotes = notes.filter((note) => note.id != id);
 
-		// Writes file again without the deleted note
-		fs.writeFile(
-			`./db/db.json`,
-			JSON.stringify(updatedNotes, null, "\t"),
-			(err) =>
-				err
-					? console.log(err)
-					: console.log(
-							`Note with ${id} has successfully been deleted.`
-					  )
-		);
+		fs.readFile(`./db/db.json`, (err, data) => {
+		
+			if (err) {
+				throw err;
+			}
+			notes = JSON.parse(data);
 
-		const response = {
-			status: "success",
-		};
+			// updatedNotes stores all notes but excludes the deleted note with the id
+			updatedNotes = notes.filter((note) => note.id != id);
 
-		res.status(201).json(response);
+			// Writes file again without the deleted note
+			fs.writeFile(
+				`./db/db.json`,
+				JSON.stringify(updatedNotes, null, "\t"),
+				(err) =>
+					err
+						? console.log(err)
+						: console.log(
+								`Note with ${id} has successfully been deleted.`
+						)
+			);
+
+			const response = {
+				status: "success",
+			};
+
+			res.status(201).json(response);
+		});
 	} else {
 		res.status(500).json("Error in deleting note");
 	}
