@@ -34,7 +34,7 @@ Guide on using Note Taker:
 * To remove the note, click on the `trash icon`.
 * To check out new notes, click on the other notes' title.
 
-Deployed App Link: 
+Deployed App Link: https://note-it-challenge.herokuapp.com/
 
 ## Contribution
 
