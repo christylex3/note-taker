@@ -23,14 +23,12 @@ app.get("/notes", (req, res) =>
 // GET /api/notes reads the db.json file and returns all saved notes as JSON
 app.get("/api/notes", (req, res) => {
 	fs.readFile(`./db/db.json`, (err, data) => {
-		
 		if (err) {
 			throw err;
 		}
-
+		// Stores parsed data into notes
 		notes = JSON.parse(data);
 		res.json(notes);
-
 	});
 });
 
@@ -55,23 +53,22 @@ app.post("/api/notes", (req, res) => {
 			}),
 		};
 
+		// Grabs the existing notes from db.json 
 		fs.readFile(`./db/db.json`, (err, data) => {
-		
 			if (err) {
 				throw err;
 			}
+			// Stores parsed data into notes
 			notes = JSON.parse(data);
 
 			// Add new note to array of notes
 			notes.push(newNote);
 
 			// Writes file again with new note added
-			fs.writeFile(`./db/db.json`, JSON.stringify(notes, null, "\t"), (err) =>
-				err
-					? console.log(err)
-					: console.log(
-							`${newNote.title} has successfully been added to notes.`
-					)
+			fs.writeFile(`./db/db.json`, JSON.stringify(notes, null, "\t"),
+				(err) =>
+					err ? console.log(err)
+						: console.log(`${newNote.title} has successfully been added to notes.`)
 			);
 
 			const response = {
@@ -94,26 +91,22 @@ app.delete("/api/notes/:id", (req, res) => {
 	// If id is present
 	if (id) {
 
+		// Grabs the existing notes from db.json
 		fs.readFile(`./db/db.json`, (err, data) => {
-		
 			if (err) {
 				throw err;
 			}
+			// Stores parsed data into notes
 			notes = JSON.parse(data);
 
 			// updatedNotes stores all notes but excludes the deleted note with the id
 			updatedNotes = notes.filter((note) => note.id != id);
 
 			// Writes file again without the deleted note
-			fs.writeFile(
-				`./db/db.json`,
-				JSON.stringify(updatedNotes, null, "\t"),
+			fs.writeFile(`./db/db.json`, JSON.stringify(updatedNotes, null, "\t"),
 				(err) =>
-					err
-						? console.log(err)
-						: console.log(
-								`Note with ${id} has successfully been deleted.`
-						)
+					err ? console.log(err)
+						: console.log(`Note with ${id} has successfully been deleted.`)
 			);
 
 			const response = {
